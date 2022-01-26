@@ -1,4 +1,5 @@
-Firebeetle_BME280
+# Firebeetle_BME280
+
 Battery powered ESP32 based IoT device to measure and report weather data and battery level as MQTT messages. R20 and R21 has been bridged on the Firebeetle board in order to measure battery voltage on pin A0.
 Estimated battery life on a single battery is about 940 days if measurement data is sent every 15 minutes and. At that time the battery is estimated to be down at 20% SOC.
 
