@@ -9,7 +9,7 @@ ESP powered by a single Lifepo4 battery
 Note! These batteries claim to have a capacity of 7200mA but are in fact 5200mA in average.
 
 Products used
-ESP32 https://www.dfrobot.com/product-1590.html
+ESP32 https://www.dfrobot.com/product-1590.html <\n>
 BME280 https://www.aliexpress.com/item/32849462236.html?spm=a2g0o.9042311.0.0.259e4c4d16GiDw
 Battery https://www.aliexpress.com/item/1005001997843247.html?spm=a2g0o.9042311.0.0.259e4c4d16GiDw
 
