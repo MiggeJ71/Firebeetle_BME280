@@ -1,13 +1,8 @@
 // ToDo:
-// - Move WiFi cridentials to separate .h file - done
-// - Only read and report battery once every hour
-// - Remove or reduce 2000ms delay at startup
-// - put BME in sleep mode?
-// - Send less data over MQTT (only needed data)
-// - test power consumption with debug OFF
+// - Add secure MQTT using SSL
 
 // Log all to Serial, comment this line to disable logging
-#define LOG Serial
+//#define LOG Serial
 // Include must be placed after LOG definition to work
 #include "log.h"
 
@@ -50,16 +45,21 @@ BME   bme(&Wire, 0x76);   // select TwoWire peripheral and set sensor address
 #define CRITICALLY_LOW_BATTERY_VOLTAGE 2.80
 
 // MQTT Topics
-#define MQTT_PUB_TEMP "esp32/bme280/IoT_3/temperature"
-#define MQTT_PUB_HUM "esp32/bme280/IoT_3/humidity"
-#define MQTT_PUB_PRES "esp32/bme280/IoT_3/pressure"
-#define MQTT_PUB_BATT "esp32/bme280/IoT_3/battery"
-#define MQTT_PUB_RESTARTS "esp32/bme280/IoT_3/restarts"
-#define MQTT_PUB_ALARM "esp32/bme280/IoT_3/alarm"
+#define MQTT_PUB_TEMP "esp32/bme280/IoT_2/temperature"
+#define MQTT_PUB_HUM "esp32/bme280/IoT_2/humidity"
+#define MQTT_PUB_PRES "esp32/bme280/IoT_2/pressure"
+#define MQTT_PUB_BATT "esp32/bme280/IoT_2/battery"
+#define MQTT_PUB_RESTARTS "esp32/bme280/IoT_2/restarts"
+#define MQTT_PUB_ALARM "esp32/bme280/IoT_2/alarm"
 
+// include definition of MQTT access to broker
+// MQTT_USER
+// MQTT_PASSWORD
+// MQTT_BROKER
+// MQTT_PORT
+#include "MQTT_access.h"
 String MQTTDeviceName = "Firebeetle";
-String MQTTServerName = "192.168.1.50";
-uint16_t MQTTPort = 1883;
+
 
 
 // Define parameters to store in RTC memory to survive deep sleep
@@ -222,9 +222,9 @@ bool ReadAndPushSensors() {
   WiFiClient net;
   MQTTClient MQTTClient;
   MQTTClient.setTimeout(5000);
-  MQTTClient.begin(MQTTServerName.c_str(), MQTTPort, net);
+  MQTTClient.begin(MQTT_BROKER, MQTT_PORT, net);
 
-  if( MQTTClient.connect(MQTTDeviceName.c_str())) { 
+  if( MQTTClient.connect(MQTTDeviceName.c_str(), MQTT_USER, MQTT_PASSWORD, false)) { 
     MQTTClient.publish(MQTT_PUB_TEMP, String(temp).c_str(), false, 2);
     MQTTClient.publish(MQTT_PUB_HUM, String(humi).c_str(), false, 2);
     MQTTClient.publish(MQTT_PUB_PRES, String(press).c_str(), false, 2);
@@ -270,9 +270,9 @@ void setup() {
   log_printf("ESP_RST_DEEPSLEEP = %d\n", ESP_RST_DEEPSLEEP);
 
   //read battery voltage
-  //cache.BatteryVoltage = readBattery();  
+  cache.BatteryVoltage = readBattery();  
   // To be used while connected with USB and no battery
-  cache.BatteryVoltage = 3.4;  
+  //cache.BatteryVoltage = 3.4;  
   log_printf("Voltage: %4.3f V\r\n", cache.BatteryVoltage);
     
   //a reset is required to wakeup again from below CRITICALLY_LOW_BATTERY_VOLTAGE
